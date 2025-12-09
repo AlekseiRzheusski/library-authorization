@@ -37,7 +37,7 @@ lcov.info
 .env
 .env.*
 appsettings.*.json
-!appsettings.json
+appsettings.json
 .vscode/
 *.nupkg
 *.snupkg
