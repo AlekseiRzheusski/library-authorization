@@ -1,4 +1,6 @@
 using LibraryAuthorization.Infrastructure.Data;
+using LibraryAuthorization.Domain.Entities;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
