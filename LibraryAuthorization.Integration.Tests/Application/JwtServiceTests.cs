@@ -38,7 +38,7 @@ public class JwtServiceTests
             Mock.Of<ILogger<UserManager<LibraryUser>>>()
         );
 
-        _testUser = new LibraryUser { UserName = "testuser" };
+        _testUser = new LibraryUser { Id = 13, UserName = "testuser" };
         userManagerMock.Setup(um => um.GetRolesAsync(_testUser))
                        .ReturnsAsync(new List<string> { "User" });
 
@@ -66,6 +66,7 @@ public class JwtServiceTests
 
         Assert.False(string.IsNullOrEmpty(token));
         Assert.Equal(_testUser.UserName, jwt.Subject);
+        Assert.Equal(_testUser.Id, long.Parse((string)jwt.Payload["userId"]));
         Assert.Equal(configuration["Jwt:Issuer"], jwt.Issuer);
     }
 }
