@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package librarymanagement;
+
+import "google/protobuf/wrappers.proto";
+
+service BookService {
+  rpc GetBook(BookGetRequest) returns (BookGetResponse);
+  rpc CreateBook(CreateBookRequest) returns (BookResponse);
+  rpc DeleteBook(BookDeleteRequest) returns (DeleteResponse);
+  rpc GetBooks(BookPageRequest) returns (BookListResponse);
+  rpc GetBooksAllPages(BookAllPagesRequest) returns (stream BookListResponse);
+  rpc UpdateBook(UpdateBookRequest) returns (BookResponse);
+}
+
+message UpdateBookRequest {
+  int64 book_id = 1;
+  google.protobuf.StringValue title = 2;
+  google.protobuf.StringValue description = 3;
+  google.protobuf.Int64Value category_id = 4;
+  google.protobuf.StringValue published_date = 5;
+  google.protobuf.Int32Value page_count = 6;
+}
+
+message BookSearchRequest{
+  google.protobuf.StringValue title = 1;
+  google.protobuf.StringValue isbn = 2;
+  google.protobuf.StringValue description = 3;
+  google.protobuf.Int64Value author_id = 4;
+  google.protobuf.Int64Value category_id = 5;
+  google.protobuf.StringValue published_date = 6; // ISO 8601 format
+  google.protobuf.Int32Value page_count = 7;
+  google.protobuf.BoolValue is_available = 11;
+}
+
+message BookAllPagesRequest{
+  BookSearchRequest search_request = 1;
+  int32 page_size = 2;
+}
+
+message BookPageRequest {
+  BookSearchRequest search_request = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
+}
+
+message BookGetRequest {
+  int64 book_id = 1;
+}
+
+message CreateBookRequest {
+  string title = 1;
+  string isbn = 2;
+  string description = 3;
+  int64 author_id = 4;
+  int64 category_id = 5;
+  string published_date = 6; // ISO 8601 format
+  int32 page_count = 7;
+}
+
+message BookDeleteRequest {
+  int64 book_id = 1;
+}
+
+message BookResponse {
+  int64 book_id = 1;
+  string title = 2;
+  string isbn = 3;
+  string description = 4;
+  int64 author_id = 5;
+  string author_name = 6;
+  int64 category_id = 7;
+  string category_name = 8;
+  string published_date = 9;
+  int32 page_count = 10;
+  bool is_available = 11;
+}
+
+message BookGetResponse {
+  BookResponse book = 1;
+}
+
+message BookListResponse {
+  repeated BookResponse books = 1;
+  int32 total_count = 2;
+  int32 number_of_pages = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
+}
+
+//istead of bool, use status codes
+message DeleteResponse {
+  string message = 2;
+}

@@ -9,6 +9,7 @@ using System.Text;
 using Autofac;
 using LibraryAuthorization.Api;
 using Autofac.Extensions.DependencyInjection;
+using LibraryAuthorization.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,6 +71,8 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // app.UseHttpsRedirection();
+
+app.UseMiddleware<RpcExceptionHandlingMiddleware>();
 
 app.UseAuthorization();
 

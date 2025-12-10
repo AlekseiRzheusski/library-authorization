@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAuthorization.Integr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAuthorization.Domain", "LibraryAuthorization.Domain\LibraryAuthorization.Domain.csproj", "{488F52D3-9B6A-46B8-8D10-D72EC72AE876}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAuthorization.Contract", "LibraryAuthorization.Contract\LibraryAuthorization.Contract.csproj", "{B96256FA-F012-438D-8519-E25BCD7323A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{488F52D3-9B6A-46B8-8D10-D72EC72AE876}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{488F52D3-9B6A-46B8-8D10-D72EC72AE876}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{488F52D3-9B6A-46B8-8D10-D72EC72AE876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B96256FA-F012-438D-8519-E25BCD7323A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B96256FA-F012-438D-8519-E25BCD7323A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B96256FA-F012-438D-8519-E25BCD7323A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B96256FA-F012-438D-8519-E25BCD7323A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
