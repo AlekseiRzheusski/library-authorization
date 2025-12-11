@@ -65,8 +65,13 @@ public class JwtServiceTests
         var jwt = handler.ReadJwtToken(token);
 
         Assert.False(string.IsNullOrEmpty(token));
-        Assert.Equal(_testUser.UserName, jwt.Subject);
-        Assert.Equal(_testUser.Id, long.Parse((string)jwt.Payload["userId"]));
+        Assert.Equal(_testUser.Id, long.Parse((string)jwt.Subject));
+
+        var name = jwt.Claims
+            .FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+        Assert.Equal(_testUser.UserName, name);
+
         Assert.Equal(configuration["Jwt:Issuer"], jwt.Issuer);
     }
 }

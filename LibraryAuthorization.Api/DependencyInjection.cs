@@ -8,9 +8,9 @@ using Librarymanagement;
 
 namespace LibraryAuthorization.Api;
 
-public static class DependencyInjection
+public class DependencyInjection : Module
 {
-    public static void RegisterServices(ContainerBuilder builder)
+    protected override void Load(ContainerBuilder builder)
     {
         //grpc
         builder.Register(ctx =>
