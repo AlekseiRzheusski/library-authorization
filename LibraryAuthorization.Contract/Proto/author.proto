@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package librarymanagement;
+
+import "google/protobuf/wrappers.proto";
+
+service AuthorService {
+  rpc GetAuthors(AuthorPageRequest) returns (AuthorListResponse);
+  rpc GetAuthor(AuthorGetRequest) returns (AuthorGetResponse);
+  rpc CreateAuthor(CreateAuthorRequest) returns (AuthorResponse);
+  rpc UpdateAuthor(UpdateAuthorRequest) returns (AuthorResponse);
+  rpc DeleteAuthor(AuthorDeleteRequest) returns (AuthorDeleteResponse);
+}
+
+message AuthorSearchRequest {
+  google.protobuf.StringValue first_name = 1;
+  google.protobuf.StringValue last_name = 2;
+  google.protobuf.StringValue biography = 3;
+  google.protobuf.StringValue date_of_birth = 4;
+  google.protobuf.BoolValue is_active = 5;
+}
+
+message AuthorPageRequest{
+  AuthorSearchRequest search_request = 1;
+  int32 page_number = 2;
+  int32 page_size = 3;
+}
+
+message AuthorGetRequest {
+  int64 author_id = 1;
+}
+
+message CreateAuthorRequest {
+  string first_name = 1;
+  string last_name = 2;
+  google.protobuf.StringValue biography = 3;
+  google.protobuf.StringValue date_of_birth = 4; // ISO 8601 format
+}
+
+message UpdateAuthorRequest {
+  int64 author_id = 1;
+  google.protobuf.StringValue first_name = 2;
+  google.protobuf.StringValue last_name = 3;
+  google.protobuf.StringValue biography = 4;
+  google.protobuf.StringValue date_of_birth = 5;
+  google.protobuf.BoolValue is_active = 6;
+}
+
+message AuthorResponse {
+  int64 author_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  google.protobuf.StringValue biography = 4;
+  google.protobuf.StringValue date_of_birth = 5;
+  bool is_active = 6;
+  int32 book_count = 7;
+}
+
+message AuthorListResponse {
+  repeated AuthorResponse authors = 1;
+  int32 total_count = 2;
+  int32 number_of_pages = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
+}
+
+message AuthorGetResponse {
+  AuthorResponse author = 1;
+}
+
+message AuthorDeleteRequest {
+  int64 author_id = 1;
+}
+
+message AuthorDeleteResponse {
+  string message = 2;
+}

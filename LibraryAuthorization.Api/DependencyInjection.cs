@@ -16,7 +16,7 @@ public class DependencyInjection : Module
         builder.Register(ctx =>
         {
             var config = ctx.Resolve<IConfiguration>();
-            var url = config["Grpc:BookServiceUrl"];
+            var url = config["Grpc:ServerUrl"];
 
             return GrpcChannel.ForAddress(url!);
         }).SingleInstance();
@@ -27,6 +27,12 @@ public class DependencyInjection : Module
             return new BookService.BookServiceClient(channel);
         }).InstancePerLifetimeScope();
 
+        builder.Register(ctx =>
+        {
+            var channel = ctx.Resolve<GrpcChannel>();
+            return new AuthorService.AuthorServiceClient(channel);
+        }).InstancePerLifetimeScope();
+
         //mapper
         builder.Register(ctx =>
         {
@@ -34,6 +40,7 @@ public class DependencyInjection : Module
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<BookMappingProfile>();
+                cfg.AddProfile<AuthorMappingProfile>();
             }, loggerFactory);
 
             return config.CreateMapper();
@@ -48,6 +55,10 @@ public class DependencyInjection : Module
         
         builder.RegisterType<BookGrpcService>()
             .As<IBookGrpcService>()
+            .InstancePerLifetimeScope();
+        
+        builder.RegisterType<AuthorGrpcService>()
+            .As<IAuthorGrpcService>()
             .InstancePerLifetimeScope();
     }
 }
