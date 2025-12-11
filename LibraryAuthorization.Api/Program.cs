@@ -60,9 +60,19 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(builder.Configuration["AllowedFrontend"]!)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
-   DependencyInjection.RegisterServices(containerBuilder);
+    containerBuilder.RegisterModule(new DependencyInjection());
 });
 
 
@@ -73,6 +83,7 @@ var app = builder.Build();
 // app.UseHttpsRedirection();
 
 app.UseMiddleware<RpcExceptionHandlingMiddleware>();
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 
