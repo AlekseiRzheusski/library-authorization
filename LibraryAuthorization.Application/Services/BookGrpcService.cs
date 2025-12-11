@@ -21,7 +21,21 @@ public class BookGrpcService : IBookGrpcService
 
     public async Task<BookDto> GetBookAsync(long Id)
     {
-        var response = await _bookServiceClient.GetBookAsync(new BookGetRequest{BookId = Id});
+        var response = await _bookServiceClient.GetBookAsync(new BookGetRequest { BookId = Id });
         return _mapper.Map<BookDto>(response.Book);
+    }
+
+    public async Task<BookListDto> GetBooksAsync(
+        SearchBookCommand command,
+        int pageNumber,
+        int pageSize)
+    {
+        var request = new BookPageRequest{
+            PageNumber = pageNumber, 
+            PageSize = pageSize, 
+            SearchRequest = _mapper.Map<BookSearchRequest>(command)};
+
+        var response = await _bookServiceClient.GetBooksAsync(request);
+        return _mapper.Map<BookListDto>(response);
     }
 }

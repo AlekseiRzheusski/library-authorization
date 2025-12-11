@@ -9,5 +9,8 @@ public class BookMappingProfile : Profile
     public BookMappingProfile()
     {
         CreateMap<BookResponse, BookDto>();
+        CreateMap<BookListResponse, BookListDto>();
+        
+        CreateMap<SearchBookCommand, BookSearchRequest>();
     }
 }
