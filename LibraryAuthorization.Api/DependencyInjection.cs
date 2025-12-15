@@ -4,6 +4,9 @@ using Grpc.Net.Client;
 using LibraryAuthorization.Application.Mappers;
 using LibraryAuthorization.Application.Services;
 using LibraryAuthorization.Application.Services.Interfaces;
+using LibraryAuthorization.Domain.Entities;
+using LibraryAuthorization.Infrastructure.Repositories;
+using LibraryAuthorization.Infrastructure.Repositories.Interfaces;
 using Librarymanagement;
 
 namespace LibraryAuthorization.Api;
@@ -51,7 +54,7 @@ public class DependencyInjection : Module
         //services
         builder.RegisterType<JwtService>()
             .As<IJwtService>()
-            .SingleInstance();
+            .InstancePerLifetimeScope();
         
         builder.RegisterType<BookGrpcService>()
             .As<IBookGrpcService>()
@@ -59,6 +62,11 @@ public class DependencyInjection : Module
         
         builder.RegisterType<AuthorGrpcService>()
             .As<IAuthorGrpcService>()
+            .InstancePerLifetimeScope();
+
+        //repositories
+        builder.RegisterType<RefreshTokenRepository>()
+            .As<IRefreshTokenRepository>()
             .InstancePerLifetimeScope();
     }
 }

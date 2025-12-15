@@ -7,10 +7,9 @@ namespace LibraryAuthorization.Infrastructure.Data;
 
 public class AuthDbContext : IdentityDbContext<LibraryUser, LibraryRole, long>
 {
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
