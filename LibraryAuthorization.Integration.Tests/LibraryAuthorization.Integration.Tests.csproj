@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
@@ -27,6 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LibraryAuthorization.Api\LibraryAuthorization.Api.csproj" />
     <ProjectReference Include="..\LibraryAuthorization.Application\LibraryAuthorization.Application.csproj" />
+    <ProjectReference Include="..\LibraryAuthorization.Infrastructure\LibraryAuthorization.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
