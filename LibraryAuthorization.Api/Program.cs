@@ -10,7 +10,6 @@ using Autofac;
 using LibraryAuthorization.Api;
 using Autofac.Extensions.DependencyInjection;
 using LibraryAuthorization.Api.Middleware;
-using Microsoft.AspNetCore.HttpLogging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,23 +77,11 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 
 
 builder.Services.AddAuthorization();
-builder.Services.AddHttpLogging(options =>
-{
-    options.LoggingFields =
-        HttpLoggingFields.Request |
-        HttpLoggingFields.RequestBody |
-        HttpLoggingFields.Response |
-        HttpLoggingFields.ResponseBody;
-
-    options.RequestBodyLogLimit = 4096;
-    options.ResponseBodyLogLimit = 4096;
-});
 
 var app = builder.Build();
 
 // app.UseHttpsRedirection();
 
-app.UseHttpLogging();
 app.UseMiddleware<RpcExceptionHandlingMiddleware>();
 app.UseCors("AllowFrontend");
 
