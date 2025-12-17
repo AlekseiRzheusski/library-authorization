@@ -1,5 +1,6 @@
 using LibraryAuthorization.Application.Services.DTOs.BookModels;
 using LibraryAuthorization.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryAuthorization.Api.Controllers;
@@ -15,6 +16,7 @@ public class BookController : ControllerBase
         _bookGrpcService = bookGrpcService;
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetBook(long id)
     {
