@@ -1,6 +1,9 @@
 using Autofac;
 using AutoMapper;
+using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
+using LibraryAuthorization.Api.Interceptors;
 using LibraryAuthorization.Application.Mappers;
 using LibraryAuthorization.Application.Services;
 using LibraryAuthorization.Application.Services.Interfaces;
@@ -16,30 +19,36 @@ public class DependencyInjection : Module
     protected override void Load(ContainerBuilder builder)
     {
         //grpc
+        builder.RegisterType<AuthenticationClientInterceptor>()
+            .SingleInstance();
+
         builder.Register(ctx =>
         {
             var config = ctx.Resolve<IConfiguration>();
+            var interceptor = ctx.Resolve<AuthenticationClientInterceptor>();
             var url = config["Grpc:ServerUrl"];
 
-            return GrpcChannel.ForAddress(url!);
+            var channel = GrpcChannel.ForAddress(url!);
+
+            return channel.Intercept(interceptor);
         }).SingleInstance();
 
         builder.Register(ctx =>
         {
-            var channel = ctx.Resolve<GrpcChannel>();
-            return new BookService.BookServiceClient(channel);
+            var invoker = ctx.Resolve<CallInvoker>();
+            return new BookService.BookServiceClient(invoker);
         }).InstancePerLifetimeScope();
 
         builder.Register(ctx =>
         {
-            var channel = ctx.Resolve<GrpcChannel>();
-            return new AuthorService.AuthorServiceClient(channel);
+            var invoker = ctx.Resolve<CallInvoker>();
+            return new AuthorService.AuthorServiceClient(invoker);
         }).InstancePerLifetimeScope();
 
         //mapper
         builder.Register(ctx =>
         {
-            var loggerFactory = ctx.Resolve<ILoggerFactory>();;
+            var loggerFactory = ctx.Resolve<ILoggerFactory>(); ;
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<BookMappingProfile>();
@@ -55,11 +64,11 @@ public class DependencyInjection : Module
         builder.RegisterType<JwtService>()
             .As<IJwtService>()
             .InstancePerLifetimeScope();
-        
+
         builder.RegisterType<BookGrpcService>()
             .As<IBookGrpcService>()
             .InstancePerLifetimeScope();
-        
+
         builder.RegisterType<AuthorGrpcService>()
             .As<IAuthorGrpcService>()
             .InstancePerLifetimeScope();
