@@ -34,6 +34,10 @@ public class RpcExceptionHandlingMiddleware
                 case StatusCode.OutOfRange:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     break;
+
+                case StatusCode.Unauthenticated:
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    break;
                 
                 default:
                     context.Response.StatusCode = StatusCodes.Status500InternalServerError;
