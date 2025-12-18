@@ -1,4 +1,5 @@
 using LibraryAuthorization.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
@@ -14,6 +15,7 @@ public class AuthorController : ControllerBase
         _authorGrpcService = authorGrpcService;
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAuthor(long id)
     {

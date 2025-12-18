@@ -54,39 +54,74 @@ public class AuthController : ControllerBase
             return Unauthorized();
 
         var tokens = await _jwtService.GenerateJwtToken(user);
-        return Ok(new { tokens });
+
+        Response.Cookies.Append("refreshToken", tokens.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Secure = false,
+            Path = "/",
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
+        return Ok(new
+        {
+            accessToken = tokens.AccessToken
+        });
     }
 
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshTokenCommand command)
+    public async Task<IActionResult> Refresh()
     {
-        var token = await _refreshTokenRepository.FindDetailedEntityByToken(command.RefreshToken);
-        if (token == null || token.ExpiresAt < DateTime.UtcNow)
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        if (string.IsNullOrEmpty(refreshToken))
+            return Unauthorized();
+
+        var token = await _refreshTokenRepository.FindDetailedEntityByToken(refreshToken);
+        if (token == null || token.ExpiresAt < DateTime.UtcNow || token.IsRevoked)
             return Unauthorized();
 
         token.IsRevoked = true;
 
         var tokens = await _jwtService.GenerateJwtToken(token.User);
 
+        Response.Cookies.Append("refreshToken", tokens.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Lax,
+            Secure = false,
+            Path = "/",
+            Expires = DateTime.UtcNow.AddDays(7)
+        });
+
         await _refreshTokenRepository.SaveAsync();
-        return Ok(tokens);
+        return Ok(new
+        {
+            accessToken = tokens.AccessToken
+        });
     }
 
     [Authorize]
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout([FromBody] RefreshTokenCommand command)
+    public async Task<IActionResult> Logout()
     {
-        var token = await _refreshTokenRepository
-            .FindFirstOrDefault(t => t.Token == command.RefreshToken && t.IsRevoked == false);
-
-        if (token is null)
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (refreshToken != null)
         {
-            return NotFound();
+            var token = await _refreshTokenRepository
+                .FindFirstOrDefault(t => t.Token == refreshToken && t.IsRevoked == false);
+
+            if (token is null)
+            {
+                return NotFound();
+            }
+
+            token.IsRevoked = true;
+
+            await _refreshTokenRepository.SaveAsync();
         }
 
-        token.IsRevoked = true;
-
-        await _refreshTokenRepository.SaveAsync();
+        Response.Cookies.Delete("refreshToken");
         return Ok();
     }
 

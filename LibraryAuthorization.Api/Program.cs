@@ -67,7 +67,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(builder.Configuration["AllowedFrontend"]!)
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -98,6 +99,7 @@ app.UseHttpLogging();
 app.UseMiddleware<RpcExceptionHandlingMiddleware>();
 app.UseCors("AllowFrontend");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
