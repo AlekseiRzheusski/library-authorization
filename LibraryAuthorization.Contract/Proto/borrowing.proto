@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package librarymanagement;
+
+import "google/protobuf/wrappers.proto";
+
+service BorrowingService {
+  rpc BorrowBook(BorrowBookRequest) returns (BorrowingResponse);
+  rpc ReturnBook(ReturnBookRequest) returns (BorrowingResponse);
+  rpc GetUserBorrowings(UserBorrowingsRequest) returns (BorrowingListResponse);
+  rpc GetOverdueBooks(OverdueBooksRequest) returns (BorrowingListResponse);
+}
+
+message BorrowBookRequest {
+  int64 book_id = 1;
+  int64 user_id = 2;
+  int32 days_to_return = 3; // Default: 14
+}
+
+message ReturnBookRequest {
+  int64 borrowing_id = 1;
+}
+
+message UserBorrowingsRequest {
+  int64 user_id = 1;
+  google.protobuf.StringValue status = 2; // "Active", "Returned", "Overdue"
+  int32 page_number = 3;
+  int32 page_size = 4;
+}
+
+message OverdueBooksRequest {
+  int32 page_number = 1;
+  int32 page_size = 2;
+}
+
+message BorrowingResponse {
+  int64 borrowing_id = 1;
+  int64 book_id = 2;
+  string book_title = 3;
+  int64 user_id = 4;
+  string borrow_date = 5;
+  string due_date = 6;
+  string return_date = 7;
+  string status = 8;
+  double fine_amount = 9;
+}
+
+message BorrowingListResponse {
+  repeated BorrowingResponse borrowings = 1;
+  int32 total_count = 2;
+  int32 number_of_pages = 3;
+  int32 page_number = 4;
+  int32 page_size = 5;
+}
