@@ -45,6 +45,12 @@ public class DependencyInjection : Module
             return new AuthorService.AuthorServiceClient(invoker);
         }).InstancePerLifetimeScope();
 
+        builder.Register(ctx =>
+        {
+            var invoker = ctx.Resolve<CallInvoker>();
+            return new BorrowingService.BorrowingServiceClient(invoker);
+        }).InstancePerLifetimeScope();
+
         //mapper
         builder.Register(ctx =>
         {
@@ -53,6 +59,7 @@ public class DependencyInjection : Module
             {
                 cfg.AddProfile<BookMappingProfile>();
                 cfg.AddProfile<AuthorMappingProfile>();
+                cfg.AddProfile<BorrowingMappingProfile>();
             }, loggerFactory);
 
             return config.CreateMapper();
@@ -71,6 +78,10 @@ public class DependencyInjection : Module
 
         builder.RegisterType<AuthorGrpcService>()
             .As<IAuthorGrpcService>()
+            .InstancePerLifetimeScope();
+        
+        builder.RegisterType<BorrowingGrpcsService>()
+            .As<IBorrowingGrpcService>()
             .InstancePerLifetimeScope();
 
         //repositories
