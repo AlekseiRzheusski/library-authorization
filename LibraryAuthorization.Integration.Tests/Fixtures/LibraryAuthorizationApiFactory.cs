@@ -11,13 +11,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.TestHost;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication;
+using Librarymanagement;
 
 namespace LibraryAuthorization.Integration.Tests.Fixtures;
 
 public class LibraryAuthorizationApiFactory
 {
     public HttpClient Client { get; }
+    public IServiceProvider Services { get; }
     public Mock<IBookGrpcService> BookGrpcServiceMock { get; } = new();
+    public Mock<IBorrowingGrpcService> BorrowingServiceMock { get; } = new();
 
     public LibraryAuthorizationApiFactory()
     {
@@ -28,14 +32,28 @@ public class LibraryAuthorizationApiFactory
                 builder.RegisterInstance(BookGrpcServiceMock.Object)
                        .As<IBookGrpcService>()
                        .SingleInstance();
+
+                builder.RegisterInstance(BorrowingServiceMock.Object)
+                       .As<IBorrowingGrpcService>()
+                       .SingleInstance();
             })
             .ConfigureWebHost(webHost =>
             {
                 webHost.UseTestServer();
                 webHost.ConfigureServices(services =>
                 {
+                    services.AddSingleton<TestAuthContext>();
+                    services.AddAuthentication("Test")
+                        .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                        "Test", _ => { });
+
+                    services.AddAuthorization();
+
                     services.AddControllers()
                         .AddApplicationPart(typeof(BookController).Assembly);
+
+                    services.AddControllers()
+                        .AddApplicationPart(typeof(BorrowingController).Assembly);
                 });
 
                 webHost.Configure(app =>
@@ -43,7 +61,9 @@ public class LibraryAuthorizationApiFactory
                     app.UseMiddleware<RpcExceptionHandlingMiddleware>();
 
                     app.UseRouting();
-                    // app.UseAuthorization();
+
+                    app.UseAuthentication();
+                    app.UseAuthorization();
 
                     app.UseEndpoints(endpoints =>
                     {
@@ -53,6 +73,7 @@ public class LibraryAuthorizationApiFactory
             })
             .Start();
 
+        Services = host.Services;
         Client = host.GetTestClient();
     }
 }
