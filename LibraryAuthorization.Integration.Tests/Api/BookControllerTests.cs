@@ -40,7 +40,7 @@ public class BookControllerTests : IClassFixture<LibraryAuthorizationApiFactory>
         _factory.BookGrpcServiceMock
             .Setup(s => s.GetBookAsync(100))
             .ThrowsAsync(new RpcException(new Status(StatusCode.NotFound, exMessage)));
-        
+
         var response = await _factory.Client.GetAsync("/api/book/100");
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
 
