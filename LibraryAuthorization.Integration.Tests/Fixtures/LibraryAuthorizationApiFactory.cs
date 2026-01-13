@@ -21,7 +21,7 @@ public class LibraryAuthorizationApiFactory
     public HttpClient Client { get; }
     public IServiceProvider Services { get; }
     public Mock<IBookGrpcService> BookGrpcServiceMock { get; } = new();
-    public Mock<IBorrowingGrpcService> BorrowingServiceMock { get; } = new();
+    public Mock<IBorrowingGrpcService> BorrowingGrpcServiceMock { get; } = new();
 
     public LibraryAuthorizationApiFactory()
     {
@@ -33,7 +33,7 @@ public class LibraryAuthorizationApiFactory
                        .As<IBookGrpcService>()
                        .SingleInstance();
 
-                builder.RegisterInstance(BorrowingServiceMock.Object)
+                builder.RegisterInstance(BorrowingGrpcServiceMock.Object)
                        .As<IBorrowingGrpcService>()
                        .SingleInstance();
             })

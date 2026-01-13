@@ -31,6 +31,10 @@ public class BookControllerTests : IClassFixture<LibraryAuthorizationApiFactory>
 
         var body = await response.Content.ReadFromJsonAsync<BookDto>();
         Assert.Equal(expected.BookId, body!.BookId);
+
+        _factory.BookGrpcServiceMock.Verify(s =>
+            s.GetBookAsync(1),
+            Times.Once);
     }
 
     [Fact]
