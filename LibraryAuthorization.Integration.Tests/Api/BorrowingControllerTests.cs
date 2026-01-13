@@ -68,6 +68,25 @@ public class BorrowingControllerTests
     }
 
     [Fact]
+    public async Task BorrowBook_IfUserRoleIsAdmin_ShouldReturnForbidden()
+    {
+        var auth = _factory.Services.GetRequiredService<TestAuthContext>();
+        auth.Claims.Clear();
+        auth.Claims.Add(new Claim(ClaimTypes.NameIdentifier, "1"));
+        auth.Claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+
+        var command = new BorrowBookCommand
+        {
+            BookId = 10
+        };
+
+        var response = await _factory.Client.PostAsJsonAsync(
+            "/api/borrowing/borrow", command);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async Task GetUserBorrowings_IfBorrowingsExist_ShouldReturnListOfUserBorrowings()
     {
         var auth = _factory.Services.GetRequiredService<TestAuthContext>();
