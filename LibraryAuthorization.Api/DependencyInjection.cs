@@ -11,6 +11,7 @@ using LibraryAuthorization.Domain.Entities;
 using LibraryAuthorization.Infrastructure.Repositories;
 using LibraryAuthorization.Infrastructure.Repositories.Interfaces;
 using Librarymanagement;
+using StackExchange.Redis;
 
 namespace LibraryAuthorization.Api;
 
@@ -67,6 +68,15 @@ public class DependencyInjection : Module
         .As<IMapper>()
         .SingleInstance();
 
+        //redis
+        builder.Register(c =>
+        {
+            var config = c.Resolve<IConfiguration>();
+            return ConnectionMultiplexer.Connect(config["ConnectionStrings:RedisConnectionString"]!);
+        })
+        .As<IConnectionMultiplexer>()
+        .SingleInstance();
+
         //services
         builder.RegisterType<JwtService>()
             .As<IJwtService>()
@@ -79,7 +89,7 @@ public class DependencyInjection : Module
         builder.RegisterType<AuthorGrpcService>()
             .As<IAuthorGrpcService>()
             .InstancePerLifetimeScope();
-        
+
         builder.RegisterType<BorrowingGrpcsService>()
             .As<IBorrowingGrpcService>()
             .InstancePerLifetimeScope();
@@ -87,6 +97,10 @@ public class DependencyInjection : Module
         //repositories
         builder.RegisterType<RefreshTokenRepository>()
             .As<IRefreshTokenRepository>()
+            .InstancePerLifetimeScope();
+        
+        builder.RegisterType<RefreshTokenRedisRepository>()
+            .As<IRefreshTokenRedisRepository>()
             .InstancePerLifetimeScope();
     }
 }

@@ -5,3 +5,6 @@ dotnet ef database update --project LibraryAuthorization.Infrastructure --startu
 
 #generate jwt key
 openssl rand -base64 32
+
+#start redis
+docker run -d --name redis -p 6379:6379 redis:7
